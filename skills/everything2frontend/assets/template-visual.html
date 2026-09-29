@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}}</title>
+<style>
+  :root{
+    --bg:#0f1216; --panel:#171c22; --panel-2:#1f262e; --line:#2b333d;
+    --fg:#e8edf3; --muted:#9aa7b4; --accent:#4ea1ff; --good:#3ddc84; --radius:12px;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f4f6f9; --panel:#fff; --panel-2:#eef2f7; --line:#d7dee7;
+           --fg:#131a22; --muted:#5b6875; --accent:#0b63ce; --good:#12874a; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);
+       font:15px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  .wrap{max-width:900px;margin:0 auto;padding:32px 20px 56px}
+  h1{margin:0 0 8px;font-size:1.6rem;letter-spacing:-.01em}
+  h2{margin:0 0 14px;font-size:.82rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted)}
+  .lede{color:var(--muted);font-size:1.02rem;margin:0}
+  .answer{margin:18px 0 0;padding:14px 16px;border-left:3px solid var(--good);
+          background:var(--panel-2);border-radius:8px;font-weight:600}
+  section{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+          padding:20px;margin-top:18px}
+  .hero{padding:14px}
+  .hero svg{width:100%;height:auto;display:block}
+  .node{fill:var(--panel-2);stroke:var(--line);stroke-width:1.5}
+  .node-accent{fill:var(--accent)}
+  .node-label{fill:var(--fg);font-size:13px;font-weight:600}
+  .node-sub{fill:var(--muted);font-size:11px}
+  .edge{stroke:var(--accent);stroke-width:2;fill:none;marker-end:url(#arrow)}
+  ol.steps{margin:0;padding-left:0;list-style:none;counter-reset:s}
+  ol.steps li{position:relative;padding:0 0 18px 46px;counter-increment:s}
+  ol.steps li::before{content:counter(s);position:absolute;left:0;top:0;width:28px;height:28px;
+    border-radius:50%;background:var(--accent);color:#04223f;font-weight:700;font-size:.85rem;
+    display:flex;align-items:center;justify-content:center}
+  ol.steps li::after{content:"";position:absolute;left:13px;top:30px;bottom:2px;width:2px;background:var(--line)}
+  ol.steps li:last-child::after{display:none}
+  ol.steps .t{font-weight:650;margin-bottom:2px}
+  ol.steps .d{color:var(--muted);font-size:.92rem}
+  table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line)}
+  th:last-child,td:last-child{text-align:right}
+  th{color:var(--muted);font-weight:500;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em}
+  .takeaway{padding:16px;border-radius:10px;background:var(--panel-2);
+            border:1px solid var(--good);font-size:1.05rem;font-weight:600}
+  .assumptions{color:var(--muted);font-size:.85rem}
+  .assumptions li{margin-bottom:3px}
+  footer{color:var(--muted);font-size:.8rem;text-align:center;margin-top:26px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>{{TITLE}}</h1>
+    <p class="lede">{{RESTATED}}</p>
+    <p class="answer">{{ANSWER}}</p>
+  </header>
+
+  <section class="hero" aria-label="Diagram">
+    <h2>Diagram</h2>
+    <svg viewBox="0 0 820 240" role="img" aria-label="Pipeline from problem to frontend">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" class="node-accent"/>
+        </marker>
+      </defs>
+
+      <rect class="node" x="16"  y="80" width="150" height="76" rx="12"/>
+      <text class="node-label" x="91" y="112" text-anchor="middle">Problem</text>
+      <text class="node-sub"   x="91" y="132" text-anchor="middle">raw question</text>
+
+      <rect class="node" x="220" y="80" width="150" height="76" rx="12"/>
+      <text class="node-label" x="295" y="112" text-anchor="middle">Frontend IR</text>
+      <text class="node-sub"   x="295" y="132" text-anchor="middle">state · inputs · rules</text>
+
+      <rect class="node" x="424" y="80" width="150" height="76" rx="12"/>
+      <text class="node-label" x="499" y="112" text-anchor="middle">Rendering</text>
+      <text class="node-sub"   x="499" y="132" text-anchor="middle">view + verify</text>
+
+      <rect class="node" x="628" y="80" width="176" height="76" rx="12"/>
+      <text class="node-label" x="716" y="105" text-anchor="middle">Frontend</text>
+      <text class="node-sub"   x="716" y="125" text-anchor="middle">interactive · visual</text>
+      <text class="node-sub"   x="716" y="141" text-anchor="middle">· spec</text>
+
+      <path class="edge" d="M166,118 H216"/>
+      <path class="edge" d="M370,118 H420"/>
+      <path class="edge" d="M574,118 H624"/>
+    </svg>
+  </section>
+
+  <section>
+    <h2>Steps</h2>
+    <ol class="steps">
+      <li><div class="t">Restate the problem</div><div class="d">Rewrite the raw question as one testable sentence. Surface assumptions.</div></li>
+      <li><div class="t">Extract the Frontend IR</div><div class="d">Name the state (nouns), the inputs (verbs), and the pure transforms.</div></li>
+      <li><div class="t">Choose a view</div><div class="d">Map each value onto a control, readout, chart, table, or diagram.</div></li>
+      <li><div class="t">Verify</div><div class="d">Assert the headline answer and at least one invariant, and show PASS/FAIL.</div></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Key numbers</h2>
+    <table>
+      <thead><tr><th>Quantity</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>Render targets</td><td>3</td></tr>
+        <tr><td>Frontend IR parts</td><td>5</td></tr>
+        <tr><td>External dependencies</td><td>0</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section>
+    <h2>Takeaway</h2>
+    <p class="takeaway">Any problem can be viewed and handled once it is expressed as state, inputs, transforms, view, and verification.</p>
+  </section>
+
+  <section>
+    <h2>Assumptions</h2>
+    <ul class="assumptions">
+      <li>Rendered as a static explainer; no interaction is required to read it.</li>
+      <li>Numbers are illustrative.</li>
+    </ul>
+  </section>
+
+  <footer>Rendered from the Frontend IR · {{DATE}}</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}}</title>
+<style>
+  :root{
+    --bg:#0f1216; --panel:#171c22; --panel-2:#1f262e; --line:#2b333d;
+    --fg:#e8edf3; --muted:#9aa7b4; --accent:#4ea1ff; --good:#3ddc84; --bad:#ff5c5c;
+    --radius:12px;
+  }
+  @media (prefers-color-scheme: light){
+    :root{ --bg:#f4f6f9; --panel:#ffffff; --panel-2:#eef2f7; --line:#d7dee7;
+           --fg:#131a22; --muted:#5b6875; --accent:#0b63ce; --good:#12874a; --bad:#c22; }
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);
+       font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+  header,main,footer{max-width:1040px;margin:0 auto;padding:20px}
+  header{padding-top:32px}
+  h1{margin:0 0 6px;font-size:1.5rem;letter-spacing:-.01em}
+  h2{margin:0 0 12px;font-size:.8rem;text-transform:uppercase;letter-spacing:.09em;color:var(--muted)}
+  .restated{margin:0;color:var(--muted)}
+  .assumptions{margin:8px 0 0;padding:8px 12px;border-left:3px solid var(--accent);
+               background:var(--panel-2);border-radius:6px;color:var(--muted);font-size:.88rem}
+  main{display:grid;gap:16px;grid-template-columns:1fr}
+  @media(min-width:820px){ main{grid-template-columns:340px 1fr} #panel-verify,#panel-table{grid-column:1/-1} }
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+  .field{margin-bottom:14px}
+  .field-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px}
+  label{font-size:.86rem;color:var(--fg)}
+  .val{font-variant-numeric:tabular-nums;color:var(--accent);font-weight:600;font-size:.86rem}
+  input[type=number],input[type=text],select{
+    width:100%;padding:7px 9px;background:var(--panel-2);color:var(--fg);
+    border:1px solid var(--line);border-radius:8px;font:inherit}
+  input[type=range]{width:100%;accent-color:var(--accent)}
+  input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+  .readouts{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-bottom:8px}
+  .readout{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:11px 13px}
+  .readout .k{font-size:.76rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+  .readout .v{font-size:1.22rem;font-weight:650;font-variant-numeric:tabular-nums;margin-top:3px}
+  .readout .u{font-size:.8rem;color:var(--muted);font-weight:400;margin-left:3px}
+  .verdict{margin-top:12px;padding:10px 13px;border-radius:10px;background:var(--panel-2);
+           border:1px solid var(--line);font-weight:600}
+  .verdict.good{border-color:var(--good);color:var(--good)}
+  .verdict.bad{border-color:var(--bad);color:var(--bad)}
+  table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+  th,td{text-align:right;padding:7px 9px;border-bottom:1px solid var(--line)}
+  th:first-child,td:first-child{text-align:left}
+  th{color:var(--muted);font-weight:500;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em}
+  .verify{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+  .verify li{display:flex;gap:10px;align-items:flex-start;padding:8px 11px;border-radius:8px;background:var(--panel-2)}
+  .verify .badge{font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:999px;flex:none;margin-top:1px}
+  .verify .pass .badge,.verify li.pass .badge{background:var(--good);color:#05230f}
+  .verify li.pass{color:var(--fg)}
+  .verify li.fail{outline:1px solid var(--bad)}
+  .verify li.fail .badge{background:var(--bad);color:#2b0505}
+  .verify .msg{color:var(--muted);font-size:.85rem}
+  svg{max-width:100%;height:auto;display:block}
+  .axis{stroke:var(--line)}
+  .barlabel{fill:var(--muted);font-size:12px}
+  .barval{fill:var(--fg);font-size:12px;font-weight:600}
+  footer{color:var(--muted);font-size:.8rem;text-align:center;padding-bottom:40px}
+</style>
+</head>
+<body>
+<header>
+  <h1>{{TITLE}}</h1>
+  <p class="restated" id="restated">{{RESTATED}}</p>
+  <p class="assumptions" id="assumptions">{{ASSUMPTIONS}}</p>
+</header>
+
+<main>
+  <section class="panel" aria-labelledby="h-in">
+    <h2 id="h-in">Inputs</h2>
+    <div id="controlsBody"></div>
+  </section>
+
+  <section class="panel" aria-labelledby="h-out">
+    <h2 id="h-out">Result</h2>
+    <div id="readouts" class="readouts"></div>
+    <div id="chart" role="img" aria-label="Comparison chart"></div>
+    <div id="verdict" class="verdict"></div>
+  </section>
+
+  <section class="panel" id="panel-table" aria-labelledby="h-tbl">
+    <h2 id="h-tbl">Breakdown</h2>
+    <div id="table"></div>
+  </section>
+
+  <section class="panel" id="panel-verify" aria-labelledby="h-ver">
+    <h2 id="h-ver">Verification</h2>
+    <ul class="verify" id="verify"></ul>
+  </section>
+</main>
+
+<footer>state + inputs &rarr; derive() &rarr; view · {{DATE}}</footer>
+
+<script>
+"use strict";
+/* Raw problem: {{RAW_PROBLEM}} */
+
+/* ------------------------------------------------------------------ *
+ * 1. STATE — the nouns. Typed by convention; samples documented here. *
+ * ------------------------------------------------------------------ */
+const STATE = {
+  months: 36,          // number, months — fixed horizon of the contract
+  currency: "HKD"      // string — unit for all money values
+};
+
+/* ------------------------------------------------------------------ *
+ * 2. INPUTS — the verbs. Declarative; the UI is built from this.      *
+ * ------------------------------------------------------------------ */
+const CONTROLS = [
+  { id:"retailPrice", type:"number", label:"Outright price",        unit:"HKD", min:0, step:1,   default:6999 },
+  { id:"monthlyFee",  type:"number", label:"Monthly plan fee",      unit:"HKD", min:0, step:1,   default:299  },
+  { id:"upfrontFee",  type:"number", label:"Upfront payment",       unit:"HKD", min:0, step:1,   default:0    },
+  { id:"dataGB",      type:"range",  label:"Monthly data allowance",unit:"GB",  min:0, max:100, step:1, default:30 }
+];
+
+/* ------------------------------------------------------------------ *
+ * 3. TRANSFORMS — pure & deterministic: (STATE, inputs) -> derived.   *
+ * ------------------------------------------------------------------ */
+function derive(state, inputs){
+  const contractTotal = inputs.upfrontFee + inputs.monthlyFee * state.months;
+  const outrightTotal = inputs.retailPrice;
+  const difference    = contractTotal - outrightTotal;
+  const monthlyDiff   = difference / state.months;
+  return {
+    contractTotal, outrightTotal, difference, monthlyDiff,
+    verdict: difference > 0 ? "Contract costs more" : "Outright costs more",
+    series: [
+      { label:"Contract ("+state.months+"m)", value:contractTotal, unit:state.currency },
+      { label:"Outright",                    value:outrightTotal, unit:state.currency }
+    ],
+    rows: [
+      ["Upfront fee",      inputs.upfrontFee, state.currency],
+      ["Monthly fee × "+state.months, inputs.monthlyFee*state.months, state.currency],
+      ["Contract total",   contractTotal, state.currency],
+      ["Outright total",   outrightTotal, state.currency],
+      ["Difference",       difference, state.currency]
+    ]
+  };
+}
+
+/* ------------------------------------------------------------------ *
+ * 4. VIEW — readouts + assertions bound to derived names.             *
+ * ------------------------------------------------------------------ */
+const VIEWS = [
+  { k:"Contract total", v:"contractTotal", unit:"HKD" },
+  { k:"Outright total",  v:"outrightTotal", unit:"HKD" },
+  { k:"Difference",      v:"difference",   unit:"HKD" },
+  { k:"Per month",       v:"monthlyDiff",  unit:"HKD/mo", digits:2 }
+];
+
+const VERIFY = [
+  { msg:"Difference equals contract total minus outright total",
+    test:(d,s,i)=> Math.abs(d.difference - (d.contractTotal - d.outrightTotal)) < 1e-9 },
+  { msg:"Contract total equals upfront plus monthly × months",
+    test:(d,s,i)=> Math.abs(d.contractTotal - (i.upfrontFee + i.monthlyFee*s.months)) < 1e-9 },
+  { msg:"With default inputs the contract costs more than buying outright",
+    test:(d)=>{ const dd=derive(STATE, defaults()); return dd.difference > 0; } }
+];
+
+/* ----------------------------- runtime ---------------------------- */
+const $ = id => document.getElementById(id);
+const fmt = (n,d=0) => Number(n).toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d});
+
+function defaults(){ const o={}; CONTROLS.forEach(c=>o[c.id]=c.default); return o; }
+
+function readInputs(){
+  const o={};
+  for(const c of CONTROLS){
+    const el = $("in_"+c.id);
+    o[c.id] = c.type==="select" ? el.value : Number(el.value);
+  }
+  return o;
+}
+
+function buildControls(){
+  const body = $("controlsBody");
+  for(const c of CONTROLS){
+    const f = document.createElement("div"); f.className="field";
+    const head = document.createElement("div"); head.className="field-head";
+    const lab = document.createElement("label"); lab.htmlFor="in_"+c.id; lab.textContent=c.label;
+    const out = document.createElement("output"); out.className="val"; out.htmlFor="in_"+c.id;
+    head.append(lab,out);
+    const el = c.type==="select" ? document.createElement("select") : document.createElement("input");
+    el.id = "in_"+c.id; el.dataset.id=c.id;
+    if(c.type==="select"){
+      for(const o of c.options){ const op=document.createElement("option"); op.value=o.value; op.textContent=o.label; el.appendChild(op); }
+    } else {
+      el.type = c.type === "range" ? "range" : c.type;
+      if(c.min!=null) el.min=c.min;
+      if(c.max!=null) el.max=c.max;
+      if(c.step!=null) el.step=c.step;
+    }
+    el.value = c.default;
+    el.addEventListener("input", update);
+    f.append(head, el); body.appendChild(f);
+  }
+}
+
+function renderReadouts(d){
+  const host=$("readouts"); host.innerHTML="";
+  for(const view of VIEWS){
+    const box=document.createElement("div"); box.className="readout";
+    const k=document.createElement("div"); k.className="k"; k.textContent=view.k;
+    const v=document.createElement("div"); v.className="v";
+    v.textContent=fmt(d[view.v], view.digits||0);
+    if(view.unit){ const u=document.createElement("span"); u.className="u"; u.textContent=view.unit; v.appendChild(u); }
+    box.append(k,v); host.appendChild(box);
+  }
+}
+
+function renderChart(d){
+  const host=$("chart"); host.innerHTML="";
+  const items=(d.series||[]).filter(s=>isFinite(s.value));
+  if(!items.length){ host.textContent=""; return; }
+  const W=560, H=180, pad={t:22,r:14,b:34,l:14};
+  const max=Math.max(...items.map(s=>Math.abs(s.value)),1);
+  const bw=(W-pad.l-pad.r)/items.length;
+  const ns="http://www.w3.org/2000/svg";
+  const svg=document.createElementNS(ns,"svg");
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  items.forEach((s,i)=>{
+    const h=(Math.abs(s.value)/max)*(H-pad.t-pad.b);
+    const x=pad.l+i*bw+bw*0.18, y=H-pad.b-h, w=bw*0.64;
+    const rect=document.createElementNS(ns,"rect");
+    rect.setAttribute("x",x); rect.setAttribute("y",y);
+    rect.setAttribute("width",w); rect.setAttribute("height",Math.max(h,1));
+    rect.setAttribute("rx",5); rect.setAttribute("fill", i===0?"var(--accent)":"var(--good)");
+    svg.appendChild(rect);
+    const val=document.createElementNS(ns,"text");
+    val.setAttribute("x",x+w/2); val.setAttribute("y",y-6);
+    val.setAttribute("text-anchor","middle"); val.setAttribute("class","barval");
+    val.textContent=fmt(s.value)+" "+s.unit;
+    svg.appendChild(val);
+    const lab=document.createElementNS(ns,"text");
+    lab.setAttribute("x",x+w/2); lab.setAttribute("y",H-pad.b+18);
+    lab.setAttribute("text-anchor","middle"); lab.setAttribute("class","barlabel");
+    lab.textContent=s.label;
+    svg.appendChild(lab);
+  });
+  const axis=document.createElementNS(ns,"line");
+  axis.setAttribute("x1",pad.l); axis.setAttribute("x2",W-pad.r);
+  axis.setAttribute("y1",H-pad.b); axis.setAttribute("y2",H-pad.b);
+  axis.setAttribute("class","axis");
+  svg.appendChild(axis);
+  host.appendChild(svg);
+}
+
+function renderTable(d){
+  const host=$("table");
+  if(!d.rows){ host.textContent=""; return; }
+  const t=document.createElement("table");
+  const thead=document.createElement("thead");
+  thead.innerHTML="<tr><th>Item</th><th>Value</th><th>Unit</th></tr>";
+  const tb=document.createElement("tbody");
+  for(const [k,v,u] of d.rows){
+    const tr=document.createElement("tr");
+    tr.innerHTML=`<td>${k}</td><td>${fmt(v)}</td><td>${u||""}</td>`;
+    tb.appendChild(tr);
+  }
+  t.append(thead,tb); host.appendChild(t);
+}
+
+function renderVerdict(d){
+  const el=$("verdict");
+  el.textContent = `${d.verdict}: ${fmt(Math.abs(d.difference))} ${STATE.currency} over ${STATE.months} months`;
+  el.className = "verdict " + (d.difference>0?"bad":"good");
+}
+
+function renderVerify(d,s,i){
+  const host=$("verify"); host.innerHTML="";
+  let allPass=true;
+  for(const a of VERIFY){
+    let ok=false; try{ ok=!!a.test(d,s,i); }catch(e){ ok=false; }
+    if(!ok) allPass=false;
+    const li=document.createElement("li"); li.className=ok?"pass":"fail";
+    const b=document.createElement("span"); b.className="badge"; b.textContent=ok?"PASS":"FAIL";
+    const m=document.createElement("span"); m.className="msg";
+    m.textContent=`${a.msg}${ok?"":` — expected the assertion to hold`}`;
+    li.append(b,m); host.appendChild(li);
+  }
+  return allPass;
+}
+
+function update(){
+  const i=readInputs();
+  const d=derive(STATE,i);
+  for(const c of CONTROLS){
+    const out=document.querySelector(`output[for="in_${c.id}"]`);
+    if(out) out.textContent = c.unit ? `${fmt(i[c.id], c.step && String(c.step).includes(".")?2:0)} ${c.unit}` : fmt(i[c.id]);
+  }
+  renderReadouts(d);
+  renderChart(d);
+  renderTable(d);
+  renderVerdict(d);
+  renderVerify(d,STATE,i);
+}
+
+buildControls();
+update();
+</script>
+</body>
+</html>
