@@ -6,9 +6,10 @@ Portable instructions for **Codex, Claude, and any general-purpose agent**.
 
 A skill collection whose single purpose is:
 
-> Take **any** question, problem, dataset, decision, or vague request and
-> translate it into the **frontend language** — then render it as something
-> a human can see and handle.
+> Take **any** question, problem, dataset, decision, or vague request, and
+> **solve it by regarding it as a frontend problem** — an actor interacting with
+> state through a view, scored by pure transforms and verifications — then render
+> it as something a human can see and handle.
 
 The frontend language is a fixed 5-part structure (the *Frontend IR*):
 
@@ -26,8 +27,8 @@ three targets: **interactive app**, **visual explainer**, or **frontend spec**.
 ## How to use it (any agent)
 
 1. Read the canonical skill: `skills/everything2frontend/SKILL.md`.
-2. Read its references: `references/frontend-ir.md`, `references/modes.md`,
-   `references/quality-bar.md`.
+2. Read its references: `references/solve-as-frontend.md`,
+   `references/frontend-ir.md`, `references/modes.md`, `references/quality-bar.md`.
 3. Copy a template from `assets/` (or run `scripts/scaffold.py`).
 4. Fill the Frontend IR, then fill the template.
 5. Run `scripts/validate_output.py` on the artifact before delivering.

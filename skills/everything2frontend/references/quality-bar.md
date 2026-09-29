@@ -5,6 +5,8 @@ checks the mechanical parts; you are responsible for the rest.
 
 ## Universal
 
+- [ ] The problem was **reduced to a frontend problem** (state, inputs,
+      transforms, view, verify) — not just illustrated.
 - [ ] The raw problem was **restated** as one testable sentence.
 - [ ] Assumptions are **listed in the artifact** (not only in chat).
 - [ ] The headline **answer** is stated explicitly and shown on screen.
@@ -35,6 +37,9 @@ checks the mechanical parts; you are responsible for the rest.
 - [ ] Acceptance tests are concrete: given -> expected, with tolerances.
 
 ## Verification discipline
+
+The problem counts as **solved** only when the verification panel is green — an
+artifact that merely looks convincing is not a solution.
 
 1. Name at least one assertion that checks the **headline answer**.
 2. Add at least one assertion that checks an **invariant** (a relationship that

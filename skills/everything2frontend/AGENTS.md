@@ -5,8 +5,10 @@ or a general-purpose agent) here and it can compile any problem into a frontend.
 
 ## Mission
 
-> Take any question, problem, dataset, decision, or vague request and render it
-> as something viewable and handleable, by expressing it in the frontend language.
+> Every problem can be **solved** by regarding it as a frontend problem: an actor
+> interacting with state through a view, scored by pure transforms and
+> verifications. Take any question, problem, dataset, decision, or vague request
+> and reduce it to that shape, then render it.
 
 ## The frontend language (Frontend IR)
 
@@ -26,13 +28,16 @@ or a general-purpose agent) here and it can compile any problem into a frontend.
 
 ## Procedure
 
-1. Restate the problem as one testable sentence; list assumptions.
-2. Fill the IR (see `references/frontend-ir.md`).
-3. Pick a mode (see `references/modes.md`).
-4. Scaffold: `python scripts/scaffold.py --mode <mode> --problem "<raw>" --slug <slug> --out <dir>`
-5. Fill the template from `assets/`, keeping the artifact self-contained.
-6. Validate: `python scripts/validate_output.py <artifact>` and fix everything.
-7. Satisfy every item in `references/quality-bar.md`.
+1. Reduce the problem to a frontend problem (see `references/solve-as-frontend.md`):
+   name the state, expose the inputs, purify the transforms, pick the view,
+   define the verification.
+2. Restate as one testable sentence; list assumptions.
+3. Fill the IR (see `references/frontend-ir.md`).
+4. Pick a mode (see `references/modes.md`).
+5. Scaffold: `python scripts/scaffold.py --mode <mode> --problem "<raw>" --slug <slug> --out <dir>`
+6. Fill the template from `assets/`, keeping the artifact self-contained.
+7. Validate: `python scripts/validate_output.py <artifact>` and fix everything.
+8. Satisfy every item in `references/quality-bar.md`.
 
 ## Hard rules
 

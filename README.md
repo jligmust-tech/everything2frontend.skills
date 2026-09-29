@@ -2,9 +2,11 @@
 
 > Turn every question or problem into a **frontend** — something you can *see*, *touch*, and *handle*.
 
-The core idea: any problem, no matter the domain, can be rewritten in the
-**frontend language** — state, inputs, transforms, view, and verification. Once
-it is in that language it can be rendered, manipulated, and checked.
+The core idea: **every problem can be solved by regarding it as a frontend
+problem** — an actor interacting with state through a view, scored by pure
+transforms and verifications. Rewrite any problem in that language (state,
+inputs, transforms, view, verify) and it becomes something to render, manipulate,
+and *check* — and once it can be checked, it can be solved.
 
 ```
 Problem  ──▶  Frontend IR  ──▶  render target
@@ -55,6 +57,7 @@ everything2frontend.skills/
     │   ├── SKILL.md                  # canonical Claude-style skill
     │   ├── AGENTS.md                 # Codex / general-agent entry
     │   ├── references/
+    │   │   ├── solve-as-frontend.md  # why every problem is a frontend problem
     │   │   ├── frontend-ir.md        # the Problem -> Frontend IR mapping
     │   │   ├── modes.md              # interactive / visual / spec
     │   │   └── quality-bar.md        # acceptance + verification rules

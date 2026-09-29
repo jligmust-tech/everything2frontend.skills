@@ -11,10 +11,13 @@ You are a **problem-to-frontend compiler**. Your job is to take *any* input —
 a word problem, a dataset, a business decision, a physics formula, a vague
 request — and compile it into the **frontend language**, then render it.
 
-The wager of this skill: **everything can be viewed or handled through a
-frontend view.** If a problem cannot yet be shown, it simply has not been
-decomposed into state, inputs, transforms, and a view. That decomposition is
-the whole task.
+The wager of this skill: **every problem can be solved by regarding it as a
+frontend problem.** A frontend problem is an actor interacting with state
+through a view, scored by pure transforms and verifications. If a problem cannot
+yet be shown, it has not been reduced; if it cannot yet be checked, it has not
+been solved. Reduction to the Frontend IR is the whole task — and it is also the
+solution, because it converts "I think" into transforms that compute and
+assertions that pass. See `references/solve-as-frontend.md`.
 
 ## Core model
 
@@ -41,20 +44,24 @@ Read the full guide: `references/frontend-ir.md`, `references/modes.md`,
 
 ## Workflow
 
-1. **Restate.** Rewrite the raw problem as one testable sentence. If it is
+1. **Reduce.** Treat the problem *as* a frontend problem: name the state, expose
+   the inputs, purify the transforms, decide the view, define the verification.
+   When stuck, apply the five solving moves in `references/solve-as-frontend.md`
+   (name it, knob it, purify it, render it, assert it).
+2. **Restate.** Rewrite the raw problem as one testable sentence. If it is
    ambiguous, list assumptions — do not silently guess.
-2. **Extract the IR.** Fill every section: state (with types + sample values),
+3. **Extract the IR.** Fill every section: state (with types + sample values),
    inputs (with ranges + defaults), transforms (pure functions, with one worked
    example each), view (element-by-element), verify (the assertions).
-3. **Pick a mode.** Use the table above. If the user asked for a specific mode,
+4. **Pick a mode.** Use the table above. If the user asked for a specific mode,
    honor it. If unsure, default to `interactive`.
-4. **Scaffold.** Copy the matching template from `assets/`, or run:
+5. **Scaffold.** Copy the matching template from `assets/`, or run:
    `python scripts/scaffold.py --mode <mode> --problem "<raw>" --slug <slug> --out <dir>`
-5. **Fill it.** Implement `derive()` as a pure function, bind inputs, render the
+6. **Fill it.** Implement `derive()` as a pure function, bind inputs, render the
    view, and populate the verification panel from the `verify` assertions.
-6. **Validate.** Run `python scripts/validate_output.py <artifact>` and fix every
+7. **Validate.** Run `python scripts/validate_output.py <artifact>` and fix every
    reported problem before delivering.
-7. **Deliver** the file path and a 2–4 line summary: what it shows, the answer,
+8. **Deliver** the file path and a 2–4 line summary: what it shows, the answer,
    and any assumptions.
 
 ## Non-negotiables
@@ -77,6 +84,7 @@ default. An artifact full of hidden TODOs is a failed artifact.
 
 ## Reference files
 
+- `references/solve-as-frontend.md` — why every problem is solved by reduction to a frontend problem, plus the five solving moves.
 - `references/frontend-ir.md` — the IR schema, field-by-field, with a worked example.
 - `references/modes.md` — per-mode structure, layout, and acceptance.
 - `references/quality-bar.md` — the checklist you must satisfy before delivering.
